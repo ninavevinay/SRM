@@ -448,7 +448,7 @@ from django.contrib.auth import update_session_auth_hash
 @login_required
 def change_password(request):
 
-    if request.method == "POST":
+    """if request.method == "POST":
         old=request.POST['oldpassword']
         new=request.POST['newpassword']
         confirm=request.POST['confpassword']
@@ -465,7 +465,7 @@ def change_password(request):
             return redirect("change_password")
         else:
             messages.success(request, "old password is incorrect")
-            return redirect("change_password")
+            return redirect("change_password")"""
 
     return render(request, "change_password.html")
 

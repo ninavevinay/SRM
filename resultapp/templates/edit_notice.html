@@ -1,0 +1,315 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-notice text-white py-4">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper bg-white bg-opacity-20 p-3 rounded-circle me-3">
+                    <i class="fas fa-edit text-white fa-lg"></i>
+                </div>
+                <div>
+                    <h2 class="mb-1 fw-bold">Edit Notice</h2>
+                    <p class="mb-0 opacity-85">Update notice information</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags }}{% endif %} 
+                                alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{% if m.tags == 'error' %}exclamation-triangle{% elif m.tags == 'success' %}check-circle{% else %}info-circle{% endif %} 
+                                      me-3 fa-lg"></i>
+                            <div class="flex-grow-1">{{ m }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Notice Title -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="form-card p-4 border rounded bg-light-subtle">
+                            <label for="title" class="form-label fw-semibold text-dark mb-3">
+                                <i class="fas fa-heading me-2 text-primary"></i>Notice Title
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg border-primary-subtle focus-highlight" 
+                                   id="title" 
+                                   name="title"
+                                   required 
+                                   placeholder="Enter an attention-grabbing title"
+                                   value="{{ notice_obj.title }}">
+                            <div class="form-text text-muted mt-2 ps-3">
+                                <small><i class="fas fa-lightbulb me-1 text-warning"></i> Make it clear and concise</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notice Info Sidebar -->
+                    <div class="col-lg-4 mb-4">
+                        <div class="notice-info p-4 border rounded bg-info bg-opacity-10 h-100">
+                            <h5 class="text-dark mb-3">
+                                <i class="fas fa-info-circle me-2 text-info"></i>Notice Information
+                            </h5>
+                            <div class="info-item mb-3">
+                                <small class="text-muted d-block mb-1">Created On</small>
+                                <h6 class="mb-0 text-dark fw-semibold">
+                                    <i class="fas fa-calendar-plus me-2"></i>
+                                    {% if notice_obj.created_date %}
+                                        {{ notice_obj.created_date|date:"d M Y" }}
+                                    {% else %}
+                                        Date not available
+                                    {% endif %}
+                                </h6>
+                            </div>
+                            <div class="info-item">
+                                <small class="text-muted d-block mb-1">Status</small>
+                                <span class="badge bg-success bg-opacity-20 text-success px-3 py-2">
+                                    <i class="fas fa-bullhorn me-1"></i>Active Notice
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notice Details -->
+                <div class="mb-4">
+                    <div class="form-card p-4 border rounded bg-light-subtle">
+                        <label for="detail" class="form-label fw-semibold text-dark mb-3">
+                            <i class="fas fa-align-left me-2 text-primary"></i>Notice Details
+                        </label>
+                        <textarea class="form-control border-primary-subtle focus-highlight" 
+                                  id="detail" 
+                                  name="detail"
+                                  required 
+                                  rows="8" 
+                                  placeholder="Provide complete details of the notice...">{{ notice_obj.detail }}</textarea>
+                        <div class="form-text text-muted mt-2 ps-3">
+                            <small><i class="fas fa-info-circle me-1 text-info"></i> Include all important information</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section mb-5 p-4 border rounded bg-light-subtle">
+                    <h5 class="text-dark mb-3">
+                        <i class="fas fa-eye me-2 text-info"></i>Notice Preview
+                    </h5>
+                    <div class="notice-preview p-4 border rounded bg-white">
+                        <div class="preview-header mb-3">
+                            <h4 class="text-primary mb-2" id="previewTitle">{{ notice_obj.title|default:"Notice Title" }}</h4>
+                            <div class="d-flex gap-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    Last Updated: {% now "d M Y" %}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-user-shield me-1"></i>
+                                    By: Administrator
+                                </small>
+                            </div>
+                        </div>
+                        <div class="preview-content">
+                            <p class="mb-0" id="previewDetail">{{ notice_obj.detail|default:"Notice details will appear here..." }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="{% url 'manage_notice' %}" class="btn btn-outline-secondary btn-lg hover-lift px-4">
+                        <i class="fas fa-times me-2"></i>Cancel Edit
+                    </a>
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-warning btn-gradient btn-lg px-4 py-2 hover-lift">
+                            <i class="fas fa-save me-2"></i>Update Notice
+                        </button>
+                        <a href="#" class="btn btn-danger btn-lg hover-lift px-4">
+                            <i class="fas fa-trash me-2"></i>Delete
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-notice {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .btn-gradient {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-gradient:hover {
+        background: linear-gradient(to right, #dc2626, #b91c1c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+    
+    .focus-highlight:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-card {
+        background: white;
+        border: 2px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+    
+    .form-card:hover {
+        border-color: #fecaca;
+        transform: translateY(-2px);
+    }
+    
+    .border-primary-subtle {
+        border-color: #fecaca !important;
+    }
+    
+    .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .notice-info {
+        border: 2px solid #bfdbfe;
+        transition: all 0.3s ease;
+    }
+    
+    .notice-info:hover {
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+    }
+    
+    .info-item {
+        transition: all 0.3s ease;
+    }
+    
+    .bg-light-subtle {
+        background-color: #f8fafc !important;
+    }
+    
+    .opacity-85 {
+        opacity: 0.85;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border-left: 4px solid;
+    }
+    
+    .alert-success {
+        border-left-color: #10b981;
+    }
+    
+    .alert-danger {
+        border-left-color: #ef4444;
+    }
+    
+    .alert-info {
+        border-left-color: #3b82f6;
+    }
+    
+    .fw-semibold {
+        font-weight: 600;
+    }
+    
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .form-control-lg {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .notice-preview {
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+    
+    .notice-preview:hover {
+        border-color: #d1d5db;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .preview-section {
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(to right, #dc2626, #b91c1c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+</style>
+
+<script>
+    // Real-time preview update
+    document.getElementById('title').addEventListener('input', function() {
+        const preview = document.getElementById('previewTitle');
+        preview.textContent = this.value || 'Notice Title';
+        preview.style.color = this.value ? '#ef4444' : '#6c757d';
+    });
+
+    document.getElementById('detail').addEventListener('input', function() {
+        const preview = document.getElementById('previewDetail');
+        preview.textContent = this.value || 'Notice details will appear here...';
+        preview.style.color = this.value ? '#374151' : '#9ca3af';
+    });
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Updating Notice...
+        `;
+        submitBtn.disabled = true;
+    });
+</script>
+{% endblock %}

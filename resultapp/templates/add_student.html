@@ -1,0 +1,394 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-student text-white py-3">
+            <div class="d-flex align-items-center">
+                
+                <div>
+                    <h2 class="mb-1">Add New Student</h2>
+                    <p class="mb-0 opacity-85">Register a student into the system</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{m.tags}}{% endif %} 
+                                alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{% if m.tags == 'error' %}exclamation-triangle{% elif m.tags == 'success' %}check-circle{% else %}info-circle{% endif %} 
+                                      me-3 fa-lg"></i>
+                            <div class="flex-grow-1">{{ m }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Personal Information Column -->
+                    <div class="col-md-6">
+                        <div class="form-section mb-4">
+                            <h5 class="text-dark mb-3 pb-2 border-bottom border-2 border-primary-subtle">
+                                <i class="fas fa-id-card me-2 text-primary"></i>Personal Information
+                            </h5>
+                            
+                            <div class="mb-4">
+                                <label for="name" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-user me-2 text-primary"></i>Full Name
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg border-primary-subtle focus-glow" 
+                                       id="name" 
+                                       name="name"
+                                       required 
+                                       placeholder="Enter student's full name">
+                                <div class="form-text text-muted">
+                                    <small><i class="fas fa-info-circle me-1 text-info"></i> Enter as per official records</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="roll_id" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-hashtag me-2 text-primary"></i>Roll ID
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg border-primary-subtle focus-glow" 
+                                       id="roll_id" 
+                                       name="roll_id"
+                                       required 
+                                       maxlength="5" 
+                                       placeholder="e.g., 1001">
+                                <div class="form-text text-muted">
+                                    <small><i class="fas fa-key me-1 text-warning"></i> Unique 5-digit identifier</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-envelope me-2 text-primary"></i>Email ID
+                                </label>
+                                <input type="email" 
+                                       class="form-control form-control-lg border-primary-subtle focus-glow" 
+                                       id="email" 
+                                       name="email"
+                                       required 
+                                       placeholder="student@example.com">
+                                <div class="form-text text-muted">
+                                    <small><i class="fas fa-at me-1 text-info"></i> Valid email address required</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-venus-mars me-2 text-primary"></i>Gender
+                                </label>
+                                <div class="d-flex gap-3 mt-2">
+                                    <div class="form-check card-radio">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               id="genderMale" 
+                                               name="gender" 
+                                               value="Male" 
+                                               checked>
+                                        <label for="genderMale" 
+                                               class="form-check-label card-radio-label bg-blue-subtle">
+                                            <i class="fas fa-male me-2 fa-lg text-primary"></i>
+                                            <span class="fw-medium">Male</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check card-radio">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               id="genderFemale" 
+                                               name="gender" 
+                                               value="Female">
+                                        <label for="genderFemale" 
+                                               class="form-check-label card-radio-label bg-pink-subtle">
+                                            <i class="fas fa-female me-2 fa-lg text-pink"></i>
+                                            <span class="fw-medium">Female</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Information Column -->
+                    <div class="col-md-6">
+                        <div class="form-section mb-4">
+                            <h5 class="text-dark mb-3 pb-2 border-bottom border-2 border-success-subtle">
+                                <i class="fas fa-graduation-cap me-2 text-success"></i>Academic Information
+                            </h5>
+
+                            <div class="mb-4">
+                                <label for="class" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-school me-2 text-success"></i>Select Class
+                                </label>
+                                <select class="form-select form-select-lg border-success-subtle focus-glow" 
+                                        id="class" 
+                                        name="class" 
+                                        required>
+                                    <option value="" disabled selected>-- Choose Class --</option>
+                                    {% for i in classes %}
+                                        <option value="{{ i.id }}" class="option-item">
+                                            📚 {{ i.name }} - Section {{ i.section }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text text-muted">
+                                    <small><i class="fas fa-list me-1 text-warning"></i> Choose class and section</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="dob" class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-birthday-cake me-2 text-success"></i>Date of Birth
+                                </label>
+                                <div class="input-group">
+                                    <input type="date" 
+                                           class="form-control form-control-lg border-success-subtle focus-glow" 
+                                           id="dob" 
+                                           name="dob" 
+                                           required>
+                                    <span class="input-group-text bg-success bg-opacity-10 border-success-subtle">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </span>
+                                </div>
+                                <div class="form-text text-muted">
+                                    <small><i class="fas fa-calendar me-1 text-info"></i> Student's date of birth</small>
+                                </div>
+                            </div>
+
+                            <!-- Student Preview Card -->
+                            <div class="preview-card mt-5 p-3 border rounded bg-light-subtle">
+                                <h6 class="text-dark mb-3">
+                                    <i class="fas fa-eye me-2 text-info"></i>Student Preview
+                                </h6>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-placeholder bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-user fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Name:</small>
+                                        <span id="previewName" class="fw-medium">-</span>
+                                        <br>
+                                        <small class="text-muted d-block mt-1">Class:</small>
+                                        <span id="previewClass" class="fw-medium">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary hover-lift px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-success btn-gradient px-4 py-2 hover-lift">
+                        <i class="fas fa-user-plus me-2"></i>Add Student
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Real-time preview update
+document.getElementById('name').addEventListener('input', function() {
+    const previewName = document.getElementById('previewName');
+    previewName.textContent = this.value || '-';
+    previewName.style.color = this.value ? '#4a6fa5' : '#6c757d';
+});
+
+document.getElementById('class').addEventListener('change', function() {
+    const previewClass = document.getElementById('previewClass');
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        previewClass.textContent = selectedOption.text.replace('📚 ', '');
+        previewClass.style.color = '#10b981';
+    } else {
+        previewClass.textContent = '-';
+        previewClass.style.color = '#6c757d';
+    }
+});
+
+// Gender selection visual feedback
+document.querySelectorAll('input[name="gender"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.card-radio-label').forEach(label => {
+            label.classList.remove('active');
+        });
+        const label = document.querySelector(`label[for="${this.id}"]`);
+        label.classList.add('active');
+    });
+});
+
+// Initialize gender selection
+document.querySelector('.card-radio-label').classList.add('active');
+</script>
+
+<style>
+.bg-gradient-student {
+    background: linear-gradient(135deg, #4a6fa5 0%, #5b21b6 100%);
+}
+
+.btn-gradient {
+    background: linear-gradient(to right, #10b981, #3b82f6);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(to right, #0da271, #2563eb);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.focus-glow:focus {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.hover-lift {
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
+}
+
+.border-primary-subtle {
+    border-color: #c1c9ff !important;
+}
+
+.border-success-subtle {
+    border-color: #a7f3d0 !important;
+}
+
+.bg-blue-subtle {
+    background-color: #eff6ff;
+    border: 2px solid #dbeafe;
+}
+
+.bg-pink-subtle {
+    background-color: #fdf2f8;
+    border: 2px solid #fce7f3;
+}
+
+.card-radio {
+    flex: 1;
+}
+
+.card-radio .form-check-input {
+    display: none;
+}
+
+.card-radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 80px;
+    text-align: center;
+}
+
+.card-radio-label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-radio-label.active {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.3);
+}
+
+.form-check-input:checked + .card-radio-label {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.3);
+}
+
+.avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-card {
+    transition: all 0.3s ease;
+}
+
+.preview-card:hover {
+    border-color: #bfdbfe;
+    transform: translateY(-2px);
+}
+
+.icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+}
+
+.option-item {
+    padding: 10px 15px;
+    transition: background-color 0.2s;
+}
+
+.option-item:hover {
+    background-color: #f1f5f9;
+}
+
+.alert {
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    border-left-color: #10b981;
+}
+
+.alert-danger {
+    border-left-color: #ef4444;
+}
+
+.alert-info {
+    border-left-color: #3b82f6;
+}
+
+.opacity-85 {
+    opacity: 0.85;
+}
+
+.bg-light-subtle {
+    background-color: #f8fafc !important;
+}
+</style>
+{% endblock %}

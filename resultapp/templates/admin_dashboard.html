@@ -1,0 +1,255 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Dashboard Header -->
+<div class="dashboard-header p-4 bg-gradient-primary text-white rounded-3 mb-4 shadow">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div class="mb-3 mb-md-0">
+            <h1 class="display-6 fw-bold mb-2">
+                <i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard
+            </h1>
+            <p class="lead mb-0 opacity-85">Welcome to your management console</p>
+        </div>
+        <div class="dashboard-stats-badge bg-primary bg-opacity-20 px-3 py-2 rounded-pill">
+            <i class="fas fa-calendar-alt me-2"></i>
+            <span id="current-date" class="fw-medium"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-5">
+    <!-- Students Card -->
+    <div class="col-xl-3 col-lg-6">
+        <div class="stat-card card border-0 shadow-lg h-100 hover-lift bg-white">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="stat-icon bg-primary bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                    <span class="badge bg-primary bg-opacity-20 text-primary px-3 py-2 rounded-pill">
+                        {{total_students}} Total
+                    </span>
+                </div>
+                <h2 class="display-5 fw-bold text-dark mb-2">{{total_students}}</h2>
+                <p class="text-muted mb-3">Registered Students</p>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" style="width: 85%"></div>
+                </div>
+                <a href="/manage_student" class="stretched-link text-decoration-none">
+                    <small class="text-primary fw-medium d-block mt-3">
+                        <i class="fas fa-arrow-right me-1"></i> View Details
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subjects Card -->
+    <div class="col-xl-3 col-lg-6">
+        <div class="stat-card card border-0 shadow-lg h-100 hover-lift bg-white">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="stat-icon bg-danger bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-book fa-2x text-danger"></i>
+                    </div>
+                    <span class="badge bg-danger bg-opacity-20 text-danger px-3 py-2 rounded-pill">
+                        {{total_subjects}} Total
+                    </span>
+                </div>
+                <h2 class="display-5 fw-bold text-dark mb-2">{{total_subjects}}</h2>
+                <p class="text-muted mb-3">Subject Listed</p>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-danger" style="width: 70%"></div>
+                </div>
+                <a href="/manage_subject" class="stretched-link text-decoration-none">
+                    <small class="text-danger fw-medium d-block mt-3">
+                        <i class="fas fa-arrow-right me-1"></i> Manage Subjects
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classes Card -->
+    <div class="col-xl-3 col-lg-6">
+        <div class="stat-card card border-0 shadow-lg h-100 hover-lift bg-white">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="stat-icon bg-warning bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-school fa-2x text-warning"></i>
+                    </div>
+                    <span class="badge bg-warning bg-opacity-20 text-warning px-3 py-2 rounded-pill">
+                        {{total_classes}} Active
+                    </span>
+                </div>
+                <h2 class="display-5 fw-bold text-dark mb-2">{{total_classes}}</h2>
+                <p class="text-muted mb-3">Classes & Sections</p>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-warning" style="width: 60%"></div>
+                </div>
+                <a href="/manage_classes" class="stretched-link text-decoration-none">
+                    <small class="text-warning fw-medium d-block mt-3">
+                        <i class="fas fa-arrow-right me-1"></i> View Classes
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Card -->
+    <div class="col-xl-3 col-lg-6">
+        <div class="stat-card card border-0 shadow-lg h-100 hover-lift bg-white">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="stat-icon bg-success bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-chart-line fa-2x text-success"></i>
+                    </div>
+                    <span class="badge bg-success bg-opacity-20 text-success px-3 py-2 rounded-pill">
+                        {{total_results}} Declared
+                    </span>
+                </div>
+                <h2 class="display-5 fw-bold text-dark mb-2">{{total_results}}</h2>
+                <p class="text-muted mb-3">Results Published</p>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: 90%"></div>
+                </div>
+                <a href="/manage_result" class="stretched-link text-decoration-none">
+                    <small class="text-success fw-medium d-block mt-3">
+                        <i class="fas fa-arrow-right me-1"></i> Manage Results
+                    </small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Banner Image -->
+<div class="banner-container mt-4">
+    <div class="card border-0 overflow-hidden shadow-lg">
+        <img src="{% static 'images/image.png' %}" 
+             class="img-fluid rounded-3" 
+             alt="Dashboard Banner"
+             style="height: 300px; object-fit: cover; width: 100%;">
+        <div class="card-img-overlay d-flex flex-column justify-content-end bg-gradient-overlay">
+            <div class="p-4">
+                <h4 class="text-white fw-bold mb-2">Student Result Management System</h4>
+                <p class="text-white opacity-85 mb-0">Efficiently manage academic records and results</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Color and UI enhancements */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4a6fa5 0%, #2c5282 100%);
+    }
+    
+    .bg-gradient-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    }
+    
+    .stat-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        border-color: #c1c9ff;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-card {
+        transition: all 0.3s ease;
+        min-height: 180px;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .dashboard-stats-badge {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .border-primary-subtle {
+        border-color: #c1c9ff !important;
+    }
+    
+    .border-info-subtle {
+        border-color: #bae6fd !important;
+    }
+    
+    .border-success-subtle {
+        border-color: #a7f3d0 !important;
+    }
+    
+    .border-warning-subtle {
+        border-color: #fde68a !important;
+    }
+    
+    .progress {
+        border-radius: 10px;
+        background-color: #f1f5f9;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+    }
+    
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+    
+    .opacity-85 {
+        opacity: 0.85;
+    }
+    
+    .rounded-3 {
+        border-radius: 12px !important;
+    }
+</style>
+
+<script>
+    // Update current date
+    const dateElement = document.getElementById('current-date');
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateElement.textContent = now.toLocaleDateString('en-US', options);
+</script>
+
+{% endblock %}

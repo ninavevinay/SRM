@@ -1,0 +1,328 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-declare text-white py-3">
+            <div class="d-flex align-items-center">
+                
+                <div>
+                    <h2 class="mb-1">Declare Student Result</h2>
+                    <p class="mb-0 opacity-85">Add exam marks for students</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if messages %}
+                {% for m in messages %}
+                <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{m.tags}}{% endif %} 
+                            alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-{% if m.tags == 'error' %}exclamation-triangle{% elif m.tags == 'success' %}check-circle{% else %}info-circle{% endif %} 
+                                  me-3 fa-lg"></i>
+                        <div class="flex-grow-1">{{ m }}</div>
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Class Selection -->
+                    <div class="col-md-6 mb-4">
+                        <div class="form-card h-100 p-3 border rounded hover-lift">
+                            <label class="form-label fw-semibold text-dark mb-3">
+                                <i class="fas fa-school me-2 text-primary"></i>Select Class
+                            </label>
+                            <select class="form-select form-select-lg border-primary-subtle focus-glow" 
+                                    id="class_id" 
+                                    name="class" 
+                                    required>
+                                <option value="" disabled selected>-- Choose Class --</option>
+                                {% for c in classes %}
+                                    <option value="{{ c.id }}" class="option-item">
+                                        📚 {{ c.name }} - Section {{ c.section }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text text-muted mt-2">
+                                <small><i class="fas fa-lightbulb me-1 text-warning"></i> Select class to load students and subjects</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Student Selection -->
+                    <div class="col-md-6 mb-4">
+                        <div class="form-card h-100 p-3 border rounded hover-lift">
+                            <label class="form-label fw-semibold text-dark mb-3">
+                                <i class="fas fa-user-graduate me-2 text-primary"></i>Select Student
+                            </label>
+                            <select class="form-select form-select-lg border-primary-subtle focus-glow" 
+                                    id="student_id" 
+                                    name="studentid" 
+                                    required 
+                                    disabled>
+                                <option value="" disabled selected>-- Choose Student --</option>
+                            </select>
+                            <div class="form-text text-muted mt-2">
+                                <small><i class="fas fa-user-clock me-1 text-info"></i> Available after selecting class</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subjects Section -->
+                <div id="subject_container" class="d-none">
+                    <div class="section-header mb-4">
+                        <h4 class="text-dark mb-3">
+                            <i class="fas fa-book-open me-2 text-success"></i>Enter Marks
+                            <span class="badge bg-success bg-opacity-10 text-success ms-2" id="subject_count">0 Subjects</span>
+                        </h4>
+                    </div>
+                    
+                    <div id="subject_fields" class="row"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary hover-lift px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </a>
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-gradient px-4 py-2 hover-lift" disabled>
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span class="submit-text">Submit Results</span>
+                        <span class="spinner-border spinner-border-sm d-none ms-2" id="submitSpinner"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('class_id').addEventListener('change', function () {
+    const classId = this.value;
+    const studentSelect = document.getElementById('student_id');
+    const submitBtn = document.getElementById('submitBtn');
+    const subjectContainer = document.getElementById('subject_container');
+    
+    if (!classId) {
+        studentSelect.disabled = true;
+        studentSelect.innerHTML = '<option value="" disabled selected>-- Choose Student --</option>';
+        subjectContainer.classList.add('d-none');
+        submitBtn.disabled = true;
+        return;
+    }
+
+    // Show loading state
+    studentSelect.disabled = true;
+    studentSelect.innerHTML = '<option value="" disabled selected>⏳ Loading students...</option>';
+    submitBtn.disabled = true;
+    
+    fetch(`/get_student_subjects/?class_id=${classId}`)
+        .then(res => res.json())
+        .then(data => {
+            // Populate students
+            studentSelect.innerHTML = '<option value="" disabled selected>-- Choose Student --</option>';
+            data.students.forEach(stu => {
+                const opt = document.createElement('option');
+                opt.value = stu.id;
+                opt.text = `🎓 ${stu.name} (Roll: ${stu.roll_id})`;
+                opt.className = 'option-item';
+                studentSelect.appendChild(opt);
+            });
+            studentSelect.disabled = false;
+
+            // Populate subjects
+            const subjectDiv = document.getElementById('subject_fields');
+            const subjectCount = document.getElementById('subject_count');
+            subjectDiv.innerHTML = "";
+            
+            if (data.subjects.length > 0) {
+                data.subjects.forEach((sub, index) => {
+                    const subjectCard = document.createElement('div');
+                    subjectCard.className = 'col-md-6 col-lg-4 mb-3';
+                    subjectCard.innerHTML = `
+                        <div class="subject-card p-3 border rounded h-100 hover-lift">
+                            <label class="form-label fw-semibold text-dark mb-2">
+                                <i class="fas fa-book me-2 text-info"></i>${sub.name}
+                            </label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       name="subject_${sub.id}"
+                                       class="form-control border-info-subtle focus-glow"
+                                       min="0" 
+                                       max="100" 
+                                       placeholder="Enter marks (0-100)"
+                                       required>
+                                <span class="input-group-text bg-info bg-opacity-10 border-info-subtle">/100</span>
+                            </div>
+                            <div class="progress mt-2" style="height: 4px;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    `;
+                    subjectDiv.appendChild(subjectCard);
+                });
+                
+                subjectContainer.classList.remove('d-none');
+                subjectCount.textContent = `${data.subjects.length} Subjects`;
+            } else {
+                subjectContainer.classList.add('d-none');
+            }
+
+            // Add input event listeners for progress bars
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = this.value;
+                    const progressBar = this.closest('.subject-card').querySelector('.progress-bar');
+                    progressBar.style.width = value + '%';
+                    progressBar.classList.toggle('bg-success', value >= 40);
+                    progressBar.classList.toggle('bg-info', value < 40);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            studentSelect.innerHTML = '<option value="" disabled selected>❌ Error loading data</option>';
+        });
+});
+
+// Enable submit button when student is selected
+document.getElementById('student_id').addEventListener('change', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = !this.value;
+});
+
+// Form submission loading state
+document.querySelector('form').addEventListener('submit', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('submitSpinner');
+    const submitText = document.querySelector('.submit-text');
+    
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    submitText.textContent = 'Processing...';
+});
+</script>
+
+<style>
+    .bg-gradient-declare {
+        background: linear-gradient(135deg, #4a6fa5 0%, #2c5282 100%);
+    }
+    
+    .btn-gradient {
+        background: linear-gradient(to right, #10b981, #059669);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-gradient:hover:not(:disabled) {
+        background: linear-gradient(to right, #0da271, #047857);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-gradient:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .focus-glow:focus {
+        border-color: #4a6fa5;
+        box-shadow: 0 0 0 0.25rem rgba(74, 111, 165, 0.25);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .form-card:hover {
+        border-color: #c1c9ff;
+    }
+    
+    .subject-card {
+        background: white;
+        border: 2px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+    
+    .subject-card:hover {
+        border-color: #bfdbfe;
+    }
+    
+    .option-item {
+        padding: 10px 15px;
+        transition: background-color 0.2s;
+    }
+    
+    .option-item:hover {
+        background-color: #f1f5f9;
+    }
+    
+    .section-header {
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+    
+    .border-primary-subtle {
+        border-color: #c1c9ff !important;
+    }
+    
+    .border-info-subtle {
+        border-color: #bae6fd !important;
+    }
+    
+    .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+    }
+    
+    .progress {
+        background-color: #f1f5f9;
+    }
+    
+    .alert {
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    
+    .alert-success {
+        border-left-color: #10b981;
+    }
+    
+    .alert-danger {
+        border-left-color: #ef4444;
+    }
+    
+    .alert-info {
+        border-left-color: #3b82f6;
+    }
+    
+    .opacity-85 {
+        opacity: 0.85;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<header class="py-5 bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Student Result Management System</h1>
+        <p class="lead opacity-90">Manage and View Student Results Effortlessly</p>
+    </div>
+</header>
+
+<section class="py-5">
+    <div class="container">
+
+        <h2 class="text-center mb-4">
+            <i class="fas fa-bullhorn text-warning animate-pulse"></i> Notice Board
+        </h2>
+
+        <div class="border p-4 rounded bg-light shadow-sm hover-shadow transition">
+            <marquee direction="up" scrollamount="1" onmouseover="this.stop()" onmouseout="this.start()">
+                <ul class="list-unstyled">
+                    {% for notice in notices %}
+                        <li class="mb-2 py-2 border-bottom-hover">
+                            <a href="{% url 'notice_detail' notice.id %}" target="_blank" class="text-decoration-none text-dark hover-accent">
+                                <i class="fas fa-angle-right text-info me-2"></i> 
+                                <span class="hover-underline">{{ notice.title }}</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary ms-2">New</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted text-center py-3">
+                            <i class="far fa-bell-slash me-2"></i>No notices available
+                        </li>
+                    {% endfor %}
+                </ul>
+            </marquee>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    /* Color and interaction enhancements */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .hover-shadow {
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .hover-shadow:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hover-accent:hover {
+        color: #4361ee !important;
+    }
+    
+    .hover-underline {
+        position: relative;
+    }
+    
+    .hover-underline::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: #4361ee;
+        transition: width 0.3s ease;
+    }
+    
+    .hover-accent:hover .hover-underline::after {
+        width: 100%;
+    }
+    
+    .border-bottom-hover {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .border-bottom-hover:hover {
+        border-bottom: 1px solid rgba(67, 97, 238, 0.2);
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    .opacity-90 {
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}

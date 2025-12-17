@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5" id="example">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow border-0">
+        <!-- Card Header -->
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">
+            <i class="fas fa-graduation-cap me-2"></i>
+            Student Result Details
+          </h3>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4">
+
+          <!-- Django Messages -->
+          {% if messages %}
+            {% for m in messages %}
+              <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags }}{% endif %} alert-dismissible fade show">
+                {{ m }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- Student Info -->
+          <div class="mb-4">
+            <p><strong>Name:</strong> <span class="text-primary">{{ student.name }}</span></p>
+            <p><strong>Roll ID:</strong> <span class="text-primary">{{ student.roll_id }}</span></p>
+            <p><strong>Class:</strong> <span class="text-primary">{{ student.student_class }}</span></p>
+          </div>
+
+          {% if results %}
+          <!-- Result Table -->
+          <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for r in results %}
+                <tr class="{% cycle 'table-light' 'table-secondary' %}">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ r.subject }}</td>
+                  <td>{{ r.marks }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+
+              <tfoot>
+                <tr class="table-primary">
+                  <th colspan="2">Total Marks</th>
+                  <td><b>{{ total_marks }}</b> / <b>{{ max_total }}</b></td>
+                </tr>
+                <tr class="table-success">
+                  <th colspan="2">Percentage</th>
+                  <td><b>{{ percentage }}%</b></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-warning text-center">
+            Your result is not declared yet
+          </div>
+          {% endif %}
+
+          <!-- Print Button -->
+          <div class="text-center mt-3">
+            <button class="btn btn-primary" onclick="printResult()">
+              <i class="fas fa-print me-2"></i> Print / PDF
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printResult() {
+    var content = document.getElementById("example").innerHTML;
+    var win = window.open("", "", "width=900,height=1200");
+
+    win.document.write(`
+      <html>
+        <head>
+          <title>Student Result</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            @page {
+              size: A4;           /* Set page size to A4 */
+              margin: 20mm;       /* Adjust margins */
+            }
+
+            body {
+              font-family: Arial, sans-serif;
+              -webkit-print-color-adjust: exact;
+              color-adjust: exact;
+              padding: 0;
+              margin: 0;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse !important;
+            }
+
+            th, td {
+              border: 1px solid #000 !important;
+              padding: 8px;
+            }
+
+            thead {
+              background-color: #343a40 !important;
+              color: #fff;
+            }
+
+            tfoot tr.table-primary {
+              background-color: #0d6efd !important;
+              color: #fff;
+            }
+
+            tfoot tr.table-success {
+              background-color: #198754 !important;
+              color: #fff;
+            }
+
+            h3 {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+
+            .text-primary {
+              color: #0d6efd !important;
+            }
+
+            @media print {
+              button {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${content}
+        </body>
+      </html>
+    `);
+
+    win.document.close();
+    win.print();
+  }
+</script>
+
+{% endblock %}

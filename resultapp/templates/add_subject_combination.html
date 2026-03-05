@@ -1,0 +1,369 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-combination text-white py-3">
+            <div class="d-flex align-items-center">
+            
+                <div>
+                    <h2 class="mb-1">Add Subject Combination</h2>
+                    <p class="mb-0 opacity-85">Link subjects to classes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if messages %}
+                {% for m in messages %} 
+                    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{m.tags}}{% endif %} 
+                                alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{% if m.tags == 'error' %}exclamation-triangle{% elif m.tags == 'success' %}check-circle{% else %}info-circle{% endif %} 
+                                      me-3 fa-lg"></i>
+                            <div class="flex-grow-1">{{ m }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="row">
+                    <!-- Class Selection Card -->
+                    <div class="col-md-6 mb-4">
+                        <div class="form-card h-100 p-4 border rounded hover-lift">
+                            <div class="mb-3">
+                                <label for="class" class="form-label fw-semibold text-dark mb-3">
+                                    <i class="fas fa-school me-2 text-primary"></i>Select Class
+                                </label>
+                                <select class="form-select form-select-lg border-primary-subtle focus-glow" 
+                                        id="class" 
+                                        name="class" 
+                                        required>
+                                    <option value="" disabled selected>-- Choose Class --</option>
+                                    {% for i in classes %}
+                                    <option value="{{i.id}}" class="option-item">
+                                        📚 {{i.name}} - Section {{i.section}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text text-muted mt-2">
+                                    <small><i class="fas fa-users-class me-1 text-info"></i> Choose the class to assign subjects</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Class Preview -->
+                            <div class="class-preview mt-4 p-3 border rounded bg-primary bg-opacity-5">
+                                <h6 class="text-dark mb-2">
+                                    <i class="fas fa-eye me-2 text-primary"></i>Class Preview
+                                </h6>
+                                <div id="classPreview" class="text-muted">
+                                    <small>No class selected</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subject Selection Card -->
+                    <div class="col-md-6 mb-4">
+                        <div class="form-card h-100 p-4 border rounded hover-lift">
+                            <div class="mb-3">
+                                <label for="subject" class="form-label fw-semibold text-dark mb-3">
+                                    <i class="fas fa-book me-2 text-success"></i>Select Subject
+                                </label>
+                                <select class="form-select form-select-lg border-success-subtle focus-glow" 
+                                        id="subject" 
+                                        name="subject" 
+                                        required>
+                                    <option value="" disabled selected>-- Choose Subject --</option>
+                                    {% for i in subjects %}
+                                    <option value="{{i.id}}" class="option-item">
+                                        📖 {{i.name}} - {{i.code}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text text-muted mt-2">
+                                    <small><i class="fas fa-graduation-cap me-1 text-info"></i> Select subject to add to class</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Subject Preview -->
+                            <div class="subject-preview mt-4 p-3 border rounded bg-success bg-opacity-5">
+                                <h6 class="text-dark mb-2">
+                                    <i class="fas fa-eye me-2 text-success"></i>Subject Preview
+                                </h6>
+                                <div id="subjectPreview" class="text-muted">
+                                    <small>No subject selected</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combination Preview -->
+                <div class="combination-preview mb-4 p-4 border rounded bg-gradient-light shadow-sm">
+                    <h5 class="text-dark mb-3">
+                        <i class="fas fa-project-diagram me-2 text-info"></i>Combination Preview
+                    </h5>
+                    <div class="d-flex align-items-center justify-content-center py-3">
+                        <div id="classBadge" class="badge bg-primary bg-opacity-10 text-primary p-3 me-2">
+                            <i class="fas fa-school me-1"></i>
+                            <span class="fw-medium">Class: -</span>
+                        </div>
+                        <div class="connection-line mx-3">
+                            <i class="fas fa-link text-secondary"></i>
+                        </div>
+                        <div id="subjectBadge" class="badge bg-success bg-opacity-10 text-success p-3 ms-2">
+                            <i class="fas fa-book me-1"></i>
+                            <span class="fw-medium">Subject: -</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-muted mt-3 mb-0">
+                        <small><i class="fas fa-info-circle me-1 text-info"></i> This subject will be assigned to the selected class</small>
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary hover-lift px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-success btn-gradient px-4 py-2 hover-lift">
+                        <i class="fas fa-link me-2"></i>Create Combination
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Class selection handler
+document.getElementById('class').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const classPreview = document.getElementById('classPreview');
+    const classBadge = document.getElementById('classBadge');
+    
+    if (selectedOption.value) {
+        const text = selectedOption.text.replace('📚 ', '');
+        classPreview.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas fa-school me-2 text-primary"></i>
+                <div>
+                    <span class="fw-medium">${text}</span>
+                    <br>
+                    <small class="text-muted">Class selected</small>
+                </div>
+            </div>
+        `;
+        classBadge.innerHTML = `<i class="fas fa-school me-1"></i><span class="fw-medium">${text}</span>`;
+        classBadge.classList.add('bg-primary', 'bg-opacity-10', 'text-primary');
+    } else {
+        classPreview.innerHTML = '<small>No class selected</small>';
+        classBadge.innerHTML = '<i class="fas fa-school me-1"></i><span class="fw-medium">Class: -</span>';
+    }
+    
+    updateConnectionVisual();
+});
+
+// Subject selection handler
+document.getElementById('subject').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subjectPreview = document.getElementById('subjectPreview');
+    const subjectBadge = document.getElementById('subjectBadge');
+    
+    if (selectedOption.value) {
+        const text = selectedOption.text.replace('📖 ', '');
+        subjectPreview.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas fa-book me-2 text-success"></i>
+                <div>
+                    <span class="fw-medium">${text}</span>
+                    <br>
+                    <small class="text-muted">Subject selected</small>
+                </div>
+            </div>
+        `;
+        subjectBadge.innerHTML = `<i class="fas fa-book me-1"></i><span class="fw-medium">${text}</span>`;
+        subjectBadge.classList.add('bg-success', 'bg-opacity-10', 'text-success');
+    } else {
+        subjectPreview.innerHTML = '<small>No subject selected</small>';
+        subjectBadge.innerHTML = '<i class="fas fa-book me-1"></i><span class="fw-medium">Subject: -</span>';
+    }
+    
+    updateConnectionVisual();
+});
+
+// Update connection visual effect
+function updateConnectionVisual() {
+    const classSelected = document.getElementById('class').value;
+    const subjectSelected = document.getElementById('subject').value;
+    const connectionLine = document.querySelector('.connection-line i');
+    
+    if (classSelected && subjectSelected) {
+        connectionLine.className = 'fas fa-link text-success animate-pulse';
+        connectionLine.style.fontSize = '1.5rem';
+    } else {
+        connectionLine.className = 'fas fa-link text-secondary';
+        connectionLine.style.fontSize = '1rem';
+    }
+}
+
+// Form submission animation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    if (document.getElementById('class').value && document.getElementById('subject').value) {
+        submitBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Creating Combination...
+        `;
+        submitBtn.disabled = true;
+    }
+});
+</script>
+
+<style>
+.bg-gradient-combination {
+    background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
+}
+
+.btn-gradient {
+    background: linear-gradient(to right, #8b5cf6, #6366f1);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(to right, #7c3aed, #4f46e5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.focus-glow:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.hover-lift {
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-card {
+    background: white;
+    border: 2px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.form-card:hover {
+    border-color: #e0e7ff;
+}
+
+.border-primary-subtle {
+    border-color: #ddd6fe !important;
+}
+
+.border-success-subtle {
+    border-color: #bbf7d0 !important;
+}
+
+.combination-preview {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px dashed #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.combination-preview:hover {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+.connection-line {
+    font-size: 1.2rem;
+    color: #94a3b8;
+}
+
+.badge {
+    padding: 0.75rem 1.25rem;
+    border-radius: 50px;
+    border: 1px solid;
+    transition: all 0.3s ease;
+}
+
+.class-preview, .subject-preview {
+    transition: all 0.3s ease;
+}
+
+.class-preview:hover {
+    border-color: #8b5cf6;
+}
+
+.subject-preview:hover {
+    border-color: #10b981;
+}
+
+.icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+}
+
+.option-item {
+    padding: 10px 15px;
+    transition: background-color 0.2s;
+}
+
+.option-item:hover {
+    background-color: #f1f5f9;
+}
+
+.alert {
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    border-left-color: #10b981;
+}
+
+.alert-danger {
+    border-left-color: #ef4444;
+}
+
+.alert-info {
+    border-left-color: #3b82f6;
+}
+
+.opacity-85 {
+    opacity: 0.85;
+}
+
+.animate-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,415 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);">
+  <div class="container-fluid">
+    <!-- Brand - Made Smaller -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'admin_dashboard' %}">
+      <div class="bg-primary rounded-circle p-1 me-2 shadow-sm">
+        <i class="fa-solid fa-school text-white" style="font-size: 0.9rem;"></i>
+      </div>
+      <div>
+        <div class="fs-6 text-dark fw-bold">SRMS</div>
+        <div class="text-muted small" style="font-size: 0.7rem;">Admin Portal</div>
+      </div>
+    </a>
+
+    <!-- Mobile Toggler -->
+    <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon" style="width: 1em; height: 1em;"></span>
+    </button>
+
+    <!-- Navigation Content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Profile Section (Visible on Desktop) -->
+      <div class="d-none d-lg-flex align-items-center me-3">
+        <img src="{% static 'images/admin.png' %}" alt="Admin" 
+             class="rounded-circle border border-2 border-primary" 
+             style="width: 35px; height: 35px;">
+        <div class="ms-2">
+          <div class="fw-medium text-dark small">Admin</div>
+          <div class="text-muted" style="font-size: 0.65rem;">System</div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu - Compact -->
+      <ul class="navbar-nav mx-auto align-items-center">
+        
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="{% url 'admin_dashboard' %}" class="nav-link d-flex align-items-center px-2">
+            <i class="fas fa-tachometer-alt me-1"></i>
+            <span class="d-none d-lg-inline">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- Classes Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" 
+             id="classesDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-chalkboard me-1"></i>
+            <span class="d-none d-lg-inline">Classes</span>
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="classesDropdown">
+            <li><a class="dropdown-item small" href="{% url 'create_class' %}">
+              <i class="fas fa-plus me-1"></i>Create Class
+            </a></li>
+            <li><a class="dropdown-item small" href="{% url 'manage_classes' %}">
+              <i class="fas fa-table me-1"></i>Manage Class
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Subjects Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" 
+             id="subjectsDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-book me-1"></i>
+            <span class="d-none d-lg-inline">Subjects</span>
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="subjectsDropdown">
+            <li><a class="dropdown-item small" href="{% url 'create_subject' %}">
+              <i class="fas fa-plus me-1"></i>Create Subject
+            </a></li>
+            <li><a class="dropdown-item small" href="{% url 'manage_subject' %}">
+              <i class="fas fa-list me-1"></i>Manage Subject
+            </a></li>
+            <li><a class="dropdown-item small" href="{% url 'add_subject_combination' %}">
+              <i class="fas fa-layer-group me-1"></i>Add Combination
+            </a></li>
+            <li><a class="dropdown-item small" href="/manage_subject_combination">
+              <i class="fas fa-cogs me-1"></i>Manage Combination
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Students Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" 
+             id="studentsDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-graduate me-1"></i>
+            <span class="d-none d-lg-inline">Students</span>
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="studentsDropdown">
+            <li><a class="dropdown-item small" href="/add_student">
+              <i class="fas fa-user-plus me-1"></i>Add Student
+            </a></li>
+            <li><a class="dropdown-item small" href="/manage_student">
+              <i class="fas fa-users me-1"></i>Manage Students
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Results Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" 
+             id="resultsDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-clipboard-list me-1"></i>
+            <span class="d-none d-lg-inline">Results</span>
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="resultsDropdown">
+            <li><a class="dropdown-item small" href="/add_result">
+              <i class="fas fa-plus me-1"></i>Add Results
+            </a></li>
+            <li><a class="dropdown-item small" href="/manage_result">
+              <i class="fas fa-chart-bar me-1"></i>Manage Results
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Notice Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-2" href="#" 
+             id="noticeDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-bullhorn me-1"></i>
+            <span class="d-none d-lg-inline">Notice</span>
+          </a>
+          <ul class="dropdown-menu shadow border-0" aria-labelledby="noticeDropdown">
+            <li><a class="dropdown-item small" href="/add_notice">
+              <i class="fas fa-plus me-1"></i>Add Notice
+            </a></li>
+            <li><a class="dropdown-item small" href="/manage_notice">
+              <i class="fas fa-bell me-1"></i>Manage Notice
+            </a></li>
+          </ul>
+        </li>
+
+        <!-- Change Password - Icon Only on Mobile -->
+        <li class="nav-item">
+          <a href="/change_password" class="nav-link d-flex align-items-center px-2">
+            <i class="fas fa-key"></i>
+            <span class="d-none d-lg-inline ms-1">Password</span>
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Action Buttons - Made Much Smaller -->
+      <div class="d-flex align-items-center gap-1">
+        <!-- Home Button -->
+        <a href="{% url 'index' %}" class="btn btn-outline-warning btn-xs d-flex align-items-center">
+          <i class="fas fa-home"></i>
+          <span class="d-none d-lg-inline ms-1">Home</span>
+        </a>
+        
+        <!-- Logout Button -->
+        <a href="/admin_logout" class="btn btn-outline-danger btn-xs d-flex align-items-center">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="d-none d-lg-inline ms-1">Logout</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- Add padding to body to prevent content from hiding behind fixed navbar -->
+<div style="padding-top: 65px;"></div>
+
+<style>
+  /* Custom Navbar Styles - COMPACT */
+  .navbar {
+    padding: 0.5rem 1rem !important;
+    min-height: 60px;
+    z-index: 1030;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+  
+  /* EXTRA SMALL BUTTONS */
+  .btn-xs {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.2;
+    border-radius: 4px;
+  }
+  
+  /* Navigation Links - COMPACT */
+  .nav-link {
+    color: #4a5568 !important;
+    padding: 0.4rem 0.6rem !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+  
+  .nav-link i {
+    font-size: 0.9rem;
+  }
+  
+  .nav-link:hover {
+    color: #2d3748 !important;
+    background: rgba(102, 126, 234, 0.08);
+    transform: translateY(-1px);
+  }
+  
+  .nav-link.active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.85rem;
+  }
+  
+  /* Dropdown Menus - COMPACT */
+  .dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid #eef2f7;
+    margin-top: 5px !important;
+    min-width: 180px;
+    font-size: 0.85rem;
+    padding: 0.25rem 0;
+  }
+  
+  .dropdown-item {
+    padding: 0.5rem 1rem !important;
+    border-radius: 4px;
+    margin: 1px 0.25rem;
+    color: #4a5568;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+  }
+  
+  .dropdown-item i {
+    font-size: 0.8rem;
+    width: 16px;
+  }
+  
+  .dropdown-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: translateX(3px);
+  }
+  
+  /* Buttons - COMPACT */
+  .btn-outline-warning {
+    border-color: #f59e0b;
+    color: #d97706;
+    font-size: 0.85rem;
+  }
+  
+  .btn-outline-warning:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border-color: transparent;
+  }
+  
+  .btn-outline-danger {
+    border-color: #ef4444;
+    color: #dc2626;
+    font-size: 0.85rem;
+  }
+  
+  .btn-outline-danger:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border-color: transparent;
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      background: white;
+      padding: 1rem;
+      border-radius: 0 0 10px 10px;
+      margin-top: 5px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    
+    .navbar-nav {
+      margin-bottom: 0.5rem;
+    }
+    
+    .nav-link {
+      padding: 0.6rem 0.8rem !important;
+      margin: 1px 0;
+      font-size: 0.9rem;
+    }
+    
+    .nav-link i {
+      font-size: 1rem;
+      min-width: 20px;
+    }
+    
+    .dropdown-menu {
+      border: none;
+      box-shadow: inset 0 0 0 1px #eef2f7;
+      margin-left: 1rem;
+      background: rgba(248, 250, 252, 0.9);
+    }
+    
+    .btn-xs {
+      width: 100%;
+      justify-content: center;
+      margin: 0.25rem 0;
+      padding: 0.5rem 0.75rem !important;
+      font-size: 0.85rem !important;
+    }
+    
+    /* Mobile profile section */
+    .navbar-collapse .d-flex:first-child {
+      display: flex !important;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+    
+    /* Adjust padding for mobile */
+    div[style*="padding-top"] {
+      padding-top: 55px !important;
+    }
+  }
+  
+  /* Desktop Styles - COMPACT */
+  @media (min-width: 992px) {
+    .navbar-nav {
+      gap: 0.25rem;
+    }
+    
+    div[style*="padding-top"] {
+      padding-top: 60px !important;
+    }
+    
+    /* Hide text on very small desktop screens */
+    @media (max-width: 1200px) {
+      .nav-link span:not(.d-none) {
+        font-size: 0.8rem;
+      }
+      
+      .navbar-brand div:first-child {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  /* Active State for Current Page */
+  .nav-link.active {
+    position: relative;
+  }
+  
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1px;
+  }
+</style>
+
+<script>
+  // Add active state to current page
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+        
+        // If it's a dropdown item, also highlight parent
+        const parentDropdown = link.closest('.dropdown-menu');
+        if (parentDropdown) {
+          const parentLink = document.querySelector(`[aria-labelledby="${parentDropdown.previousElementSibling.id}"]`);
+          if (parentLink) {
+            parentLink.classList.add('active');
+          }
+        }
+      }
+    });
+    
+    // Auto-close dropdowns on mobile after click
+    if (window.innerWidth < 992) {
+      document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function() {
+          const navbarCollapse = document.getElementById('navbarContent');
+          if (navbarCollapse.classList.contains('show')) {
+            new bootstrap.Collapse(navbarCollapse).toggle();
+          }
+        });
+      });
+    }
+  });
+  
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown') && !event.target.closest('.dropdown-toggle')) {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu.classList.contains('show')) {
+          const dropdown = new bootstrap.Dropdown(menu.previousElementSibling);
+          dropdown.hide();
+        }
+      });
+    }
+  });
+</script>

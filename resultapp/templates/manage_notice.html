@@ -1,0 +1,463 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Ensure Font Awesome is loaded -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-notice text-white py-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    
+                    <div>
+                        <h2 class="mb-1 fw-bold">Manage Notices</h2>
+                        <p class="mb-0 opacity-85">View and manage all announcements</p>
+                    </div>
+                </div>
+                <a href="{% url 'add_notice' %}" class="btn btn-light btn-gradient-action">
+                    <i class="fas fa-plus me-2"></i>Add New Notice
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if messages %}
+                {% for m in messages %} 
+                    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags }}{% endif %} 
+                                alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <!-- Proper icon classes -->
+                            {% if m.tags == 'error' %}
+                                <i class="fas fa-exclamation-triangle me-3"></i>
+                            {% elif m.tags == 'success' %}
+                                <i class="fas fa-check-circle me-3"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle me-3"></i>
+                            {% endif %}
+                            <div class="flex-grow-1 fw-medium">{{ m }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if notices %}
+            <div class="table-responsive">
+                <table class="table table-hover border rounded overflow-hidden">
+                    <thead class="bg-danger text-white">
+                        <tr>
+                            <th class="text-center py-3 border-0">#</th>
+                            <th class="py-3 border-0">
+                                <i class="fas fa-heading me-2"></i>Title
+                            </th>
+                            <th class="py-3 border-0">
+                                <i class="fas fa-align-left me-2"></i>Details
+                            </th>
+                            <th class="py-3 border-0">
+                                <i class="fas fa-calendar me-2"></i>Posted On
+                            </th>
+                            <th class="py-3 border-0">
+                                <i class="fas fa-history me-2"></i>Last Updated
+                            </th>
+                            <th class="text-center py-3 border-0">
+                                <i class="fas fa-cogs me-2"></i>Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for notice in notices %}
+                        <tr class="hover-lift-row">
+                            <td class="text-center fw-bold align-middle border-0">
+                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-circle px-3 py-2">
+                                    {{ forloop.counter }}
+                                </span>
+                            </td>
+                            <td class="align-middle border-0">
+                                <div class="d-flex align-items-center">
+                                    <div class="notice-icon bg-danger bg-opacity-10 rounded-circle p-2 me-3">
+                                        <i class="fas fa-bullhorn text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold text-dark">{{ notice.title }}</h6>
+                                        <small class="text-muted">Notice</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle border-0">
+                                <div class="notice-details">
+                                    <p class="mb-0 text-dark">
+                                        {{ notice.detail|truncatewords:15 }}
+                                        {% if notice.detail|wordcount > 15 %}
+                                            <span class="text-primary">...read more</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="align-middle border-0">
+                                <div class="date-badge">
+                                    <i class="fas fa-clock me-2 text-muted"></i>
+                                    <span class="text-muted">{{ notice.posting_date|date:"d M Y" }}</span>
+                                    <br>
+                                    <small class="text-muted">{{ notice.posting_date|date:"g:i a" }}</small>
+                                </div>
+                            </td>
+                            <td class="align-middle border-0">
+                                <div class="date-badge">
+                                    <i class="fas fa-sync-alt me-2 text-muted"></i>
+                                    <span class="text-muted">{{ notice.updation_date|date:"d M Y" }}</span>
+                                    <br>
+                                    <small class="text-muted">{{ notice.updation_date|date:"g:i a" }}</small>
+                                </div>
+                            </td>
+                            <td class="align-middle border-0">
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'edit_notice' notice.id %}" 
+                                       class="btn btn-info btn-action btn-sm hover-lift">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <a href="?delete={{ notice.id }}" 
+                                       onclick="return confirm('Are you sure you want to delete this notice? This action cannot be undone.')" 
+                                       class="btn btn-danger btn-action btn-sm hover-lift">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="summary-cards mt-5">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card p-3 border rounded bg-danger bg-opacity-10 text-center">
+                            <i class="fas fa-bullhorn fa-2x text-danger mb-2"></i>
+                            <h3 class="mb-1 text-danger fw-bold">{{ notices|length }}</h3>
+                            <p class="mb-0 text-muted">Total Notices</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card p-3 border rounded bg-warning bg-opacity-10 text-center">
+                            <i class="fas fa-calendar-day fa-2x text-warning mb-2"></i>
+                            <h3 class="mb-1 text-warning fw-bold">{% now "d" %}</h3>
+                            <p class="mb-0 text-muted">Today's Date</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card p-3 border rounded bg-info bg-opacity-10 text-center">
+                            <i class="fas fa-bell fa-2x text-info mb-2"></i>
+                            <h3 class="mb-1 text-info fw-bold">{{ today_notices }}</h3>
+                            <p class="mb-0 text-muted">Notices Today</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card p-3 border rounded bg-success bg-opacity-10 text-center">
+                            <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                            <h3 class="mb-1 text-success fw-bold">{{ this_week_notices }}</h3>
+                            <p class="mb-0 text-muted">This Week</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- Empty State -->
+            <div class="empty-state text-center py-5">
+                <div class="icon-wrapper bg-light rounded-circle p-4 d-inline-block mb-4">
+                    <i class="fas fa-bullhorn fa-3x text-muted"></i>
+                </div>
+                <h4 class="text-dark fw-bold mb-3">No Notices Found</h4>
+                <p class="text-muted mb-4">You haven't created any notices yet. Start by adding your first announcement.</p>
+                <a href="{% url 'add_notice' %}" class="btn btn-danger btn-gradient-action px-4 py-2">
+                    <i class="fas fa-plus me-2"></i>Create First Notice
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Font Awesome fix */
+    @font-face {
+        font-family: 'Font Awesome 6 Free';
+        font-style: normal;
+        font-weight: 900;
+        font-display: block;
+        src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2") format("woff2");
+    }
+    
+    .fa,
+    .fas,
+    .far,
+    .fal,
+    .fab {
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        line-height: 1;
+    }
+    
+    .bg-gradient-notice {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .btn-gradient-action {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .btn-gradient-action:hover {
+        background: linear-gradient(to right, #dc2626, #b91c1c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        color: white;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hover-lift-row {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift-row:hover {
+        transform: translateY(-2px);
+        background-color: #fef2f2 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .notice-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-action {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 6px;
+        font-weight: 500;
+        border: none;
+    }
+    
+    .btn-info {
+        background: linear-gradient(to right, #0ea5e9, #3b82f6);
+        color: white;
+    }
+    
+    .btn-info:hover {
+        background: linear-gradient(to right, #0284c7, #2563eb);
+        color: white;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(to right, #ef4444, #dc2626);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background: linear-gradient(to right, #dc2626, #b91c1c);
+        color: white;
+    }
+    
+    .badge {
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .stat-card {
+        transition: all 0.3s ease;
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .empty-state {
+        padding: 3rem 1rem;
+        border: 2px dashed #fecaca;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    }
+    
+    .empty-state .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: white;
+    }
+    
+    .opacity-85 {
+        opacity: 0.85;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border-left: 4px solid;
+    }
+    
+    .alert-success {
+        border-left-color: #10b981;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    }
+    
+    .alert-danger {
+        border-left-color: #ef4444;
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    }
+    
+    .alert-info {
+        border-left-color: #3b82f6;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    
+    .fw-semibold {
+        font-weight: 600;
+    }
+    
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        border: none;
+    }
+    
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .table thead {
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+    }
+    
+    .table tbody tr {
+        border-bottom: 1px solid #fee2e2;
+    }
+    
+    .table-hover > tbody > tr:hover {
+        background-color: rgba(254, 242, 242, 0.8);
+    }
+    
+    .date-badge {
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        background-color: #f8fafc;
+        display: inline-block;
+        min-width: 120px;
+    }
+    
+    .summary-cards .stat-card h3 {
+        font-size: 2rem;
+        margin: 0.5rem 0;
+    }
+    
+    .notice-details {
+        max-width: 250px;
+    }
+    
+    .notice-details p {
+        line-height: 1.5;
+        margin: 0;
+    }
+    
+    .text-primary {
+        color: #3b82f6 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effects to table rows
+        const rows = document.querySelectorAll('.hover-lift-row');
+        
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            // Make entire row clickable for notice details
+            row.addEventListener('click', function(e) {
+                // Only trigger if not clicking on buttons or links
+                if (!e.target.closest('a') && !e.target.closest('button')) {
+                    // Find the notice details text
+                    const noticeText = this.querySelector('.notice-details p');
+                    if (noticeText) {
+                        const fullText = noticeText.textContent;
+                        if (fullText.includes('...read more')) {
+                            // You can implement a modal or expand view here
+                            alert('Notice details view would open here');
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Add loading animation to buttons
+        const actionButtons = document.querySelectorAll('.btn-action');
+        actionButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!this.classList.contains('disabled')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Processing...';
+                    this.classList.add('disabled');
+                    
+                    // Reset after 2 seconds in case of error
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('disabled');
+                    }, 2000);
+                }
+            });
+        });
+        
+        // Add tooltip for truncated text
+        const noticeDetails = document.querySelectorAll('.notice-details p');
+        noticeDetails.forEach(detail => {
+            if (detail.textContent.includes('...read more')) {
+                detail.title = "Click to read full notice";
+                detail.style.cursor = 'pointer';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<!-- Force Font Awesome inclusion -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css" crossorigin="anonymous">
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center py-4">
+          <i class="fas fa-user-shield fa-3x mb-3"></i>
+          <h3>Admin Login</h3>
+          <p class="mb-0">Access your management dashboard</p>
+        </div>
+        
+        <div class="card-body p-5">
+          {% if error %}
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+          </div>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+              <label class="form-label">
+                <i class="fas fa-user me-2"></i>Username
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-user"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="username"
+                  required
+                  placeholder="Enter username"
+                />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">
+                <i class="fas fa-key me-2"></i>Password
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control"
+                  name="password"
+                  required
+                  placeholder="Enter password"
+                />
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple toggle password visibility
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-focus username
+    document.querySelector('input[name="username"]').focus();
+  });
+</script>
+{% endblock %}  

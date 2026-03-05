@@ -1,0 +1,296 @@
+{% load static %}
+<style>
+  /* Light Modern Sidebar */
+  .sidebar {
+    min-height: 100vh;
+    background: #ffffff;
+    padding-top: 20px;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.05);
+    border-right: 1px solid #eef2f7;
+  }
+
+  /* Profile section */
+  .sidebar .profile {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 25px 15px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    border-radius: 0 0 20px 20px;
+  }
+
+  .sidebar .profile img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    background: white;
+  }
+
+  .sidebar .profile h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1.1rem;
+  }
+
+  .sidebar .profile p {
+    color: #718096;
+    font-size: 0.85rem;
+    margin: 5px 0 0;
+  }
+
+  /* Navigation links */
+  .sidebar .nav-link {
+    color: #4a5568;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    margin: 4px 15px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .sidebar .nav-link:hover {
+    color: #2d3748;
+    background: #f7fafc;
+    transform: translateX(8px);
+  }
+
+  .sidebar .nav-link.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .sidebar .nav-link.active:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4090 100%);
+  }
+
+  /* Icons */
+  .sidebar .nav-link i {
+    width: 25px;
+    font-size: 1rem;
+    color: #718096;
+  }
+
+  .sidebar .nav-link.active i,
+  .sidebar .nav-link:hover i {
+    color: inherit;
+  }
+
+  /* Collapse menus */
+  .sidebar .collapse .nav-link {
+    padding: 12px 20px 12px 45px;
+    margin: 2px 15px 2px 30px;
+    background: transparent;
+    border-left: 2px solid #e2e8f0;
+    border-radius: 0 12px 12px 0;
+  }
+
+  .sidebar .collapse .nav-link:hover {
+    background: #f1f5f9;
+    border-left-color: #667eea;
+  }
+
+  .sidebar .collapse .nav-link.active {
+    background: rgba(102, 126, 234, 0.1);
+    border-left-color: #667eea;
+    color: #667eea;
+  }
+
+  /* Caret animation */
+  .sidebar a.nav-link[data-bs-toggle="collapse"] .fa-caret-down {
+    transition: transform 0.3s ease;
+    color: #a0aec0;
+  }
+
+  .sidebar a.nav-link[data-bs-toggle="collapse"][aria-expanded="true"] .fa-caret-down {
+    transform: rotate(180deg);
+    color: #667eea;
+  }
+
+  /* Badges */
+  .sidebar .menu-badge {
+    background: #edf2f7;
+    color: #4a5568;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+
+  .sidebar .nav-link.active .menu-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  /* Logout button */
+  .sidebar .logout-btn {
+    margin-top: auto;
+    padding: 20px 15px;
+    border-top: 1px solid #e2e8f0;
+  }
+</style>
+
+<nav class="col-md-3 sidebar collapse d-md-block d-flex flex-column">
+  <div class="profile">
+    <img src="{% static 'images/admin.png' %}" alt="Admin Profile">
+    <h6>Administrator</h6>
+    <p>System Management</p>
+  </div>
+
+  <ul class="nav flex-column flex-grow-1">
+    
+    <!-- Dashboard -->
+    <li class="nav-item">
+      <a href="{% url 'admin_dashboard' %}" class="nav-link active">
+        <i class="fas fa-tachometer-alt me-3"></i> Dashboard
+      </a>
+    </li>
+
+    <!-- Classes Menu -->
+    <li class="nav-item">
+      <a href="#classesMenu" data-bs-toggle="collapse" 
+         class="nav-link d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-chalkboard me-3"></i> Classes</span>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <div class="collapse" id="classesMenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="{% url 'create_class' %}" class="nav-link">
+              <i class="fas fa-plus me-3"></i> Create Class
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'manage_classes' %}" class="nav-link">
+              <i class="fas fa-table me-3"></i> Manage Class
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Subjects Menu -->
+    <li class="nav-item">
+      <a href="#subjectMenu" data-bs-toggle="collapse" 
+         class="nav-link d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-book me-3"></i> Subjects</span>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <div class="collapse" id="subjectMenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="{% url 'create_subject' %}" class="nav-link">
+              <i class="fas fa-plus me-3"></i> Create Subject
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'manage_subject' %}" class="nav-link">
+              <i class="fas fa-list me-3"></i> Manage Subject
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'add_subject_combination' %}" class="nav-link">
+              <i class="fas fa-layer-group me-3"></i> Add Combination
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/manage_subject_combination" class="nav-link">
+              <i class="fas fa-cogs me-3"></i> Manage Combination
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Student Menu -->
+    <li class="nav-item">
+      <a href="#studentMenu" data-bs-toggle="collapse" 
+         class="nav-link d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-user-graduate me-3"></i> Students</span>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <div class="collapse" id="studentMenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="/add_student" class="nav-link">
+              <i class="fas fa-user-plus me-3"></i> Add Student
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/manage_student" class="nav-link">
+              <i class="fas fa-users me-3"></i> Manage Students
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Results Menu -->
+    <li class="nav-item">
+      <a href="#resultsMenu" data-bs-toggle="collapse" 
+         class="nav-link d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-clipboard-list me-3"></i> Results</span>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <div class="collapse" id="resultsMenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="/add_result" class="nav-link">
+              <i class="fas fa-plus me-3"></i> Add Results
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/manage_result" class="nav-link">
+              <i class="fas fa-chart-bar me-3"></i> Manage Results
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Notice Menu -->
+    <li class="nav-item">
+      <a href="#NoticeMenu" data-bs-toggle="collapse" 
+         class="nav-link d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-bullhorn me-3"></i> Notice</span>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <div class="collapse" id="NoticeMenu">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="/add_notice" class="nav-link">
+              <i class="fas fa-plus me-3"></i> Add Notice
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/manage_notice" class="nav-link">
+              <i class="fas fa-bell me-3"></i> Manage Notice
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- Change Password -->
+    <li class="nav-item">
+      <a href="/change_password" class="nav-link">
+        <i class="fas fa-key me-3"></i> Change Password
+      </a>
+    </li>
+
+  </ul>
+
+  <!-- Logout at bottom -->
+  <div class="logout-btn">
+    <a href="/logout" class="btn btn-outline-danger btn-sm w-100">
+      <i class="fas fa-sign-out-alt me-2"></i> Logout
+    </a>
+  </div>
+</nav>

@@ -1,0 +1,160 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-admin text-white py-3">
+            <h2 class="mb-0">
+                <i class="fas fa-bullhorn me-2"></i> Create New Notice
+            </h2>
+            <p class="mb-0 opacity-85">Add important announcements for students</p>
+        </div>
+        
+        <div class="card-body p-4">
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{m.tags}}{% endif %} 
+                                alert-dismissible fade show shadow-sm border-0" 
+                         role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{% if m.tags == 'error' %}exclamation-circle{% elif m.tags == 'success' %}check-circle{% else %}info-circle{% endif %} 
+                                      me-3"></i>
+                            <div>{{ m }}</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="title" class="form-label fw-semibold text-dark">
+                        <i class="fas fa-heading me-2 text-primary"></i>Notice Title
+                    </label>
+                    <input type="text" 
+                           class="form-control form-control-lg border-primary-subtle focus-shadow" 
+                           id="title" 
+                           name="title"
+                           required 
+                           placeholder="Enter a clear and concise title...">
+                    <div class="form-text text-muted">
+                        <small><i class="fas fa-lightbulb me-1 text-warning"></i> Keep it short but descriptive</small>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="details" class="form-label fw-semibold text-dark">
+                        <i class="fas fa-align-left me-2 text-primary"></i>Notice Details
+                    </label>
+                    <textarea class="form-control border-primary-subtle focus-shadow" 
+                              id="details" 
+                              name="details"
+                              required 
+                              rows="8" 
+                              placeholder="Provide complete details of the notice..."></textarea>
+                    <div class="form-text text-muted">
+                        <small><i class="fas fa-info-circle me-1 text-info"></i> Include all important information</small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary hover-lift">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-success btn-gradient px-4 py-2 hover-lift">
+                        <i class="fas fa-paper-plane me-2"></i> Publish Notice
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Admin-specific gradient */
+    .bg-gradient-admin {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    }
+    
+    .btn-gradient {
+        background: linear-gradient(to right, #28a745, #20c997);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-gradient:hover {
+        background: linear-gradient(to right, #218838, #1da57c);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    .focus-shadow:focus {
+        border-color: #4361ee;
+        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .form-control-lg {
+        border-radius: 8px;
+        padding: 12px 16px;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border-width: 2px;
+    }
+    
+    .alert {
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    
+    .alert-success {
+        border-left-color: #28a745;
+    }
+    
+    .alert-danger {
+        border-left-color: #dc3545;
+    }
+    
+    .alert-info {
+        border-left-color: #17a2b8;
+    }
+    
+    .border-primary-subtle {
+        border-color: #c1c9ff !important;
+    }
+    
+    .opacity-85 {
+        opacity: 0.85;
+    }
+    
+    .fw-semibold {
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
